@@ -20,5 +20,13 @@
   "bugs": {
     "url": "https://github.com/zhitkovkostya/da-sh/issues"
   },
-  "homepage": "https://github.com/zhitkovkostya/da-sh#readme"
+  "homepage": "https://github.com/zhitkovkostya/da-sh#readme",
+  "devDependencies": {
+    "react": "18.0.0",
+    "react-dom": "18.0.0"
+  },
+  "peerDependencies": {
+    "react": "18.0.0",
+    "react-dom": "18.0.0"
+  }
 }
