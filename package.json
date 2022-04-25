@@ -1,0 +1,24 @@
+{
+  "name": "da-sh",
+  "version": "0.1.0",
+  "description": "A UI kit for building beautiful dashboards.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhitkovkostya/da-sh.git"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "ui"
+  ],
+  "author": "Konstantin Zhitkov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zhitkovkostya/da-sh/issues"
+  },
+  "homepage": "https://github.com/zhitkovkostya/da-sh#readme"
+}
