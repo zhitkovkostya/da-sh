@@ -2,8 +2,11 @@
   "name": "da-sh",
   "version": "0.1.0",
   "description": "A UI kit for building beautiful dashboards.",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "module": "lib/index.esm.js",
+  "types": "lib/index.d.ts",
   "scripts": {
+    "build": "rollup -c",
     "test": "test",
     "storybook": "start-storybook -p 6006",
     "storybook:build": "build-storybook"
@@ -25,6 +28,8 @@
   "homepage": "https://github.com/zhitkovkostya/da-sh#readme",
   "devDependencies": {
     "@babel/core": "^7.17.9",
+    "@rollup/plugin-commonjs": "22.0.0",
+    "@rollup/plugin-node-resolve": "13.2.1",
     "@storybook/addon-actions": "^6.4.22",
     "@storybook/addon-essentials": "^6.4.22",
     "@storybook/addon-interactions": "^6.4.22",
@@ -33,13 +38,17 @@
     "@storybook/testing-library": "^0.0.11",
     "@types/react": "18.0.6",
     "babel-loader": "^8.2.5",
+    "postcss": "8.4.12",
     "react": "18.0.0",
     "react-dom": "18.0.0",
+    "rollup": "2.70.2",
+    "rollup-plugin-peer-deps-external": "2.2.4",
+    "rollup-plugin-postcss": "4.0.2",
+    "rollup-plugin-typescript2": "0.31.2",
     "typescript": "4.6.3"
   },
   "peerDependencies": {
     "react": "18.0.0",
     "react-dom": "18.0.0"
-  },
-  "dependencies": {}
+  }
 }
