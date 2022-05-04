@@ -1,0 +1,23 @@
+.listbox {
+  width: 300px;
+  margin: 0;
+  padding: 0;
+}
+
+.listbox:focus {
+  box-shadow: 0 0 4px 0 #000;
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.listbox-option {
+  margin-bottom: 0.4rem;
+  padding: 0.64rem 1.28rem;
+  background-color: aliceblue;
+  border-radius: 0.4rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+.listbox-option[aria-selected="true"] {
+  background-color: aquamarine;
+}
