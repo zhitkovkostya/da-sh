@@ -1,7 +1,7 @@
 import React, { ReactChild } from "react";
 import "./listbox.css";
 
-type ListboxValue = string | null;
+type ListboxValue = string | undefined;
 
 interface ListboxDescendant {
   // Option index.
@@ -25,7 +25,7 @@ interface ListboxContextOptions {
 const ListboxContext = React.createContext<ListboxContextOptions>({
   options: [],
   setOptions: () => {},
-  selectedOption: null,
+  selectedOption: undefined,
   setSelectedOption: () => {},
 });
 
@@ -77,17 +77,20 @@ const ListboxOption = ({
 };
 
 interface ListboxProps {
-  children: React.ReactElement<ListboxOptionProps>;
+  children: React.ReactElement<ListboxOptionProps>[];
+  defaultValue?: ListboxValue;
 }
 
 /**
  * Listbox
  */
-const Listbox = ({ children, ...props }: ListboxProps) => {
+const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
   const [options, setOptions] = React.useState<ListboxDescendant[]>([]);
 
   const [selectedOption, setSelectedOption] =
-    React.useState<ListboxValue>(null);
+    React.useState<ListboxValue>(defaultValue);
+
+  const tabIndex = options.length > 0 ? 0 : -1;
 
   const context = React.useMemo<ListboxContextOptions>(
     () => ({ options, setOptions, selectedOption, setSelectedOption }),
@@ -122,13 +125,24 @@ const Listbox = ({ children, ...props }: ListboxProps) => {
     setSelectedOption(nextValue);
   };
 
+  const handleFocus = () => {
+    if (typeof selectedOption === "undefined" && options.length > 0) {
+      setSelectedOption(options[0].value);
+    }
+  };
+
   React.useEffect(() => {
-    const optionsData = React.Children.map<
-      ListboxDescendant,
-      React.ReactElement<ListboxOptionProps>
-    >(children, (child, index) => {
-      return { index: index, value: child.props.value };
-    });
+    setSelectedOption(defaultValue);
+  }, [defaultValue]);
+
+  React.useEffect(() => {
+    const optionsData =
+      React.Children.map<
+        ListboxDescendant,
+        React.ReactElement<ListboxOptionProps>
+      >(children, (child, index) => {
+        return { index: index, value: child.props.value };
+      }) || [];
 
     setOptions(optionsData);
   }, []);
@@ -138,7 +152,9 @@ const Listbox = ({ children, ...props }: ListboxProps) => {
       <ul
         aria-activedescendant={String(selectedOption)}
         className="listbox"
-        tabIndex={0}
+        role="listbox"
+        tabIndex={tabIndex}
+        onFocus={handleFocus}
         onKeyDown={handleKeyDown}
         {...props}
       >
