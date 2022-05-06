@@ -1,9 +1,11 @@
 import React from "react";
 import "./listbox.css";
 
+type ListboxValue = string | null;
+
 interface ListboxContextOptions {
-  selectedOption: any;
-  setSelectedOption: React.Dispatch<React.SetStateAction<null>>;
+  selectedOption: ListboxValue;
+  setSelectedOption: React.Dispatch<React.SetStateAction<ListboxValue>>;
 }
 
 /**
@@ -20,7 +22,7 @@ interface ListboxOptionProps {
   // Whether or not the option is disabled from selection and navigation.
   disabled?: boolean;
   // The option's value.
-  value: any;
+  value: ListboxValue;
 }
 
 /**
@@ -50,7 +52,7 @@ const ListboxOption = ({
       className="listbox-option"
       // Each option in the listbox has role `option` and is a DOM descendant of the element with role `listbox`.
       // https://www.w3.org/TR/wai-aria-1.0/roles#option
-      id={value}
+      id={String(value)}
       role="option"
       onClick={handleClick}
     >
@@ -67,8 +69,9 @@ interface ListboxProps {
  * Listbox
  */
 const Listbox = ({ children, ...props }: ListboxProps) => {
-  const [selectedOption, setSelectedOption] = React.useState(null);
-  const context = React.useMemo(
+  const [selectedOption, setSelectedOption] =
+    React.useState<ListboxValue>(null);
+  const context = React.useMemo<ListboxContextOptions>(
     () => ({ selectedOption, setSelectedOption }),
     [selectedOption]
   );
