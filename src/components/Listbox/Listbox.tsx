@@ -1,9 +1,20 @@
-import React from "react";
+import React, { ReactChild } from "react";
 import "./listbox.css";
 
 type ListboxValue = string | null;
 
+interface ListboxDescendant {
+  // Option index.
+  index: number;
+  // Option value.
+  value: ListboxValue;
+}
+
 interface ListboxContextOptions {
+  // A set of listbox option data.
+  options: ListboxDescendant[];
+  setOptions: React.Dispatch<React.SetStateAction<ListboxDescendant[]>>;
+  // Selected option id.
   selectedOption: ListboxValue;
   setSelectedOption: React.Dispatch<React.SetStateAction<ListboxValue>>;
 }
@@ -12,9 +23,13 @@ interface ListboxContextOptions {
  * Listbox Context
  */
 const ListboxContext = React.createContext<ListboxContextOptions>({
+  options: [],
+  setOptions: () => {},
   selectedOption: null,
   setSelectedOption: () => {},
 });
+
+ListboxContext.displayName = "ListboxContext";
 
 interface ListboxOptionProps {
   // The option's content.
@@ -62,25 +77,69 @@ const ListboxOption = ({
 };
 
 interface ListboxProps {
-  children: React.ReactNode;
+  children: React.ReactElement<ListboxOptionProps>;
 }
 
 /**
  * Listbox
  */
 const Listbox = ({ children, ...props }: ListboxProps) => {
+  const [options, setOptions] = React.useState<ListboxDescendant[]>([]);
+
   const [selectedOption, setSelectedOption] =
     React.useState<ListboxValue>(null);
+
   const context = React.useMemo<ListboxContextOptions>(
-    () => ({ selectedOption, setSelectedOption }),
-    [selectedOption]
+    () => ({ options, setOptions, selectedOption, setSelectedOption }),
+    [options, selectedOption]
   );
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    const { code } = event;
+    const optionData = options.find(
+      (option) => option.value === selectedOption
+    );
+    const optionIndex = optionData ? optionData.index : 0;
+    let nextIndex = optionIndex;
+    let nextValue;
+
+    if (code === "ArrowUp") {
+      nextIndex = optionIndex - 1;
+    } else if (code === "ArrowDown") {
+      nextIndex = optionIndex + 1;
+    } else {
+      return false;
+    }
+
+    if (
+      options[nextIndex] === undefined ||
+      options[nextIndex].value === selectedOption
+    ) {
+      return false;
+    }
+
+    nextValue = options[nextIndex].value;
+    setSelectedOption(nextValue);
+  };
+
+  React.useEffect(() => {
+    const optionsData = React.Children.map<
+      ListboxDescendant,
+      React.ReactElement<ListboxOptionProps>
+    >(children, (child, index) => {
+      return { index: index, value: child.props.value };
+    });
+
+    setOptions(optionsData);
+  }, []);
+
   return (
     <ListboxContext.Provider value={context}>
       <ul
         aria-activedescendant={String(selectedOption)}
         className="listbox"
         tabIndex={0}
+        onKeyDown={handleKeyDown}
         {...props}
       >
         {children}
