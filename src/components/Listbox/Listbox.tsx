@@ -3,6 +3,11 @@ import "./listbox.css";
 
 type ListboxValue = string | undefined;
 
+enum HighlightDirection {
+  Up,
+  Down,
+}
+
 interface ListboxDescendant {
   // Option index.
   index: number;
@@ -69,6 +74,8 @@ const ListboxOption = ({
       // https://www.w3.org/TR/wai-aria-1.0/roles#option
       id={String(value)}
       role="option"
+      // Safari keeps the option focused when clicked.
+      tabIndex={-1}
       onClick={handleClick}
     >
       {children}
@@ -85,6 +92,8 @@ interface ListboxProps {
  * Listbox
  */
 const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
+  const listboxRef = React.useRef<HTMLUListElement>(null);
+
   const [options, setOptions] = React.useState<ListboxDescendant[]>([]);
 
   const [selectedOption, setSelectedOption] =
@@ -98,27 +107,38 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
   );
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    const { code } = event;
+    switch (event.code) {
+      case "ArrowDown":
+        event.preventDefault();
+        highlightSiblingOption(HighlightDirection.Down);
+        break;
+      case "ArrowUp":
+        event.preventDefault();
+        highlightSiblingOption(HighlightDirection.Up);
+        break;
+    }
+  };
+
+  const highlightSiblingOption = (direction: HighlightDirection) => {
     const optionData = options.find(
       (option) => option.value === selectedOption
     );
     const optionIndex = optionData ? optionData.index : 0;
+
     let nextIndex = optionIndex;
     let nextValue;
 
-    if (code === "ArrowUp") {
-      nextIndex = optionIndex - 1;
-    } else if (code === "ArrowDown") {
+    if (direction === HighlightDirection.Down) {
       nextIndex = optionIndex + 1;
     } else {
-      return false;
+      nextIndex = optionIndex - 1;
     }
 
     if (
       options[nextIndex] === undefined ||
       options[nextIndex].value === selectedOption
     ) {
-      return false;
+      return;
     }
 
     nextValue = options[nextIndex].value;
@@ -131,11 +151,41 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
     }
   };
 
+  const getOptionElementByValue = (
+    value: ListboxValue
+  ): HTMLLIElement | undefined => {
+    const listboxEl = listboxRef.current;
+
+    if (listboxEl === null) {
+      return;
+    }
+
+    const listboxOptionEl = listboxEl.querySelector<HTMLLIElement>(
+      `#${selectedOption}`
+    );
+
+    if (listboxOptionEl === null) {
+      return;
+    }
+
+    return listboxOptionEl;
+  };
+
   React.useEffect(() => {
     setSelectedOption(defaultValue);
   }, [defaultValue]);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
+    const listboxOptionEl = getOptionElementByValue(selectedOption);
+
+    if (listboxOptionEl === undefined) {
+      return;
+    }
+
+    listboxOptionEl.scrollIntoView({ block: "nearest" });
+  }, [selectedOption]);
+
+  React.useLayoutEffect(() => {
     const optionsData =
       React.Children.map<
         ListboxDescendant,
@@ -152,6 +202,7 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
       <ul
         aria-activedescendant={String(selectedOption)}
         className="listbox"
+        ref={listboxRef}
         role="listbox"
         tabIndex={tabIndex}
         onFocus={handleFocus}

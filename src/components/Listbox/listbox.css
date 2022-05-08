@@ -1,5 +1,7 @@
 .listbox {
-  width: 300px;
+  overflow-y: auto;
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
 }
@@ -10,14 +12,16 @@
 }
 
 .listbox-option {
-  margin-bottom: 0.4rem;
   padding: 0.64rem 1.28rem;
-  background-color: aliceblue;
-  border-radius: 0.4rem;
+  background-color: #fff;
   list-style: none;
   cursor: pointer;
 }
 
+.listbox-option:focus {
+  outline: none;
+}
+
 .listbox-option[aria-selected="true"] {
-  background-color: aquamarine;
+  background-color: #dcdcdc;
 }
