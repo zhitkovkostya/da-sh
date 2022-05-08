@@ -53,12 +53,23 @@ const ListboxOption = ({
   disabled = false,
   value,
 }: ListboxOptionProps) => {
+  const ref = React.useRef<HTMLLIElement>(null);
   const context = React.useContext(ListboxContext);
   const isSelected = context.selectedOption === value;
 
   const handleClick = (event: React.MouseEvent) => {
     context.setSelectedOption(value);
   };
+
+  // create ref
+
+  React.useLayoutEffect(() => {
+    if (ref.current === null) {
+      return;
+    }
+
+    ref.current.scrollIntoView({ block: "nearest" });
+  }, [isSelected]);
 
   return (
     <li
@@ -73,6 +84,7 @@ const ListboxOption = ({
       // Each option in the listbox has role `option` and is a DOM descendant of the element with role `listbox`.
       // https://www.w3.org/TR/wai-aria-1.0/roles#option
       id={String(value)}
+      ref={ref}
       role="option"
       // Safari keeps the option focused when clicked.
       tabIndex={-1}
@@ -151,39 +163,9 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
     }
   };
 
-  const getOptionElementByValue = (
-    value: ListboxValue
-  ): HTMLLIElement | undefined => {
-    const listboxEl = listboxRef.current;
-
-    if (listboxEl === null) {
-      return;
-    }
-
-    const listboxOptionEl = listboxEl.querySelector<HTMLLIElement>(
-      `#${selectedOption}`
-    );
-
-    if (listboxOptionEl === null) {
-      return;
-    }
-
-    return listboxOptionEl;
-  };
-
   React.useEffect(() => {
     setSelectedOption(defaultValue);
   }, [defaultValue]);
-
-  React.useLayoutEffect(() => {
-    const listboxOptionEl = getOptionElementByValue(selectedOption);
-
-    if (listboxOptionEl === undefined) {
-      return;
-    }
-
-    listboxOptionEl.scrollIntoView({ block: "nearest" });
-  }, [selectedOption]);
 
   React.useLayoutEffect(() => {
     const optionsData =
