@@ -22,6 +22,9 @@ interface ListboxContextOptions {
   // Focused option id.
   focusedOption: ListboxValue;
   setFocusedOption: React.Dispatch<React.SetStateAction<ListboxValue>>;
+  // Selected option id.
+  selectedOption: ListboxValue;
+  setSelectedOption: React.Dispatch<React.SetStateAction<ListboxValue>>;
 }
 
 /**
@@ -32,6 +35,8 @@ const ListboxContext = React.createContext<ListboxContextOptions>({
   setOptions: () => {},
   focusedOption: undefined,
   setFocusedOption: () => {},
+  selectedOption: undefined,
+  setSelectedOption: () => {},
 });
 
 ListboxContext.displayName = "ListboxContext";
@@ -54,12 +59,20 @@ const ListboxOption = ({
   value,
 }: ListboxOptionProps) => {
   const ref = React.useRef<HTMLLIElement>(null);
-  const { focusedOption, setFocusedOption } = React.useContext(ListboxContext);
+  const { focusedOption, setFocusedOption, selectedOption, setSelectedOption } =
+    React.useContext(ListboxContext);
   const isFocused = focusedOption === value;
+  const isSelected = selectedOption === value;
 
   const handleClick = (event: React.MouseEvent) => {
-    setFocusedOption(value);
+    setSelectedOption(value);
   };
+
+  React.useEffect(() => {
+    if (isSelected === true) {
+      setFocusedOption(value);
+    }
+  }, [selectedOption]);
 
   React.useLayoutEffect(() => {
     if (ref.current === null || isFocused === false) {
@@ -77,7 +90,7 @@ const ListboxOption = ({
       // In a single-select listbox, the selected option has `aria-selected`
       // set to `true`.
       // https://www.w3.org/TR/wai-aria-practices-1.2/#Listbox
-      aria-selected={isFocused}
+      aria-selected={isSelected}
       className="listbox-option"
       data-focused={isFocused}
       // Each option in the listbox has role `option` and is a DOM descendant of the element with role `listbox`.
@@ -110,25 +123,37 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
   const [focusedOption, setFocusedOption] =
     React.useState<ListboxValue>(defaultValue);
 
+  const [selectedOption, setSelectedOption] =
+    React.useState<ListboxValue>(defaultValue);
+
   const tabIndex = options.length > 0 ? 0 : -1;
 
   const context = React.useMemo<ListboxContextOptions>(
-    () => ({ options, setOptions, focusedOption, setFocusedOption }),
-    [options, focusedOption]
+    () => ({
+      options,
+      setOptions,
+      focusedOption,
+      setFocusedOption,
+      selectedOption,
+      setSelectedOption,
+    }),
+    [options, focusedOption, selectedOption]
   );
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
+    event.preventDefault();
+
     switch (event.code) {
       case "ArrowDown":
-        event.preventDefault();
         highlightSiblingOption(HighlightDirection.Down);
         break;
       case "ArrowUp":
-        event.preventDefault();
         highlightSiblingOption(HighlightDirection.Up);
         break;
+      case "Enter":
       case "Space":
-        event.preventDefault();
+        setSelectedOption(focusedOption);
+        break;
     }
   };
 
@@ -163,7 +188,7 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
   };
 
   React.useEffect(() => {
-    setFocusedOption(defaultValue);
+    setSelectedOption(defaultValue);
   }, [defaultValue]);
 
   React.useLayoutEffect(() => {
