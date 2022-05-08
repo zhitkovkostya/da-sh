@@ -1,18 +1,45 @@
-import React from "react";
+import React, { ReactChild } from "react";
 import "./listbox.css";
 
+type ListboxValue = string | undefined;
+
+enum HighlightDirection {
+  Up,
+  Down,
+}
+
+interface ListboxDescendant {
+  // Option index.
+  index: number;
+  // Option value.
+  value: ListboxValue;
+}
+
 interface ListboxContextOptions {
-  selectedOption: any;
-  setSelectedOption: React.Dispatch<React.SetStateAction<null>>;
+  // A set of listbox option data.
+  options: ListboxDescendant[];
+  setOptions: React.Dispatch<React.SetStateAction<ListboxDescendant[]>>;
+  // Focused option id.
+  focusedOption: ListboxValue;
+  setFocusedOption: React.Dispatch<React.SetStateAction<ListboxValue>>;
+  // Selected option id.
+  selectedOption: ListboxValue;
+  setSelectedOption: React.Dispatch<React.SetStateAction<ListboxValue>>;
 }
 
 /**
  * Listbox Context
  */
 const ListboxContext = React.createContext<ListboxContextOptions>({
-  selectedOption: null,
+  options: [],
+  setOptions: () => {},
+  focusedOption: undefined,
+  setFocusedOption: () => {},
+  selectedOption: undefined,
   setSelectedOption: () => {},
 });
+
+ListboxContext.displayName = "ListboxContext";
 
 interface ListboxOptionProps {
   // The option's content.
@@ -20,7 +47,7 @@ interface ListboxOptionProps {
   // Whether or not the option is disabled from selection and navigation.
   disabled?: boolean;
   // The option's value.
-  value: any;
+  value: ListboxValue;
 }
 
 /**
@@ -31,12 +58,29 @@ const ListboxOption = ({
   disabled = false,
   value,
 }: ListboxOptionProps) => {
-  const context = React.useContext(ListboxContext);
-  const isSelected = context.selectedOption === value;
+  const ref = React.useRef<HTMLLIElement>(null);
+  const { focusedOption, setFocusedOption, selectedOption, setSelectedOption } =
+    React.useContext(ListboxContext);
+  const isFocused = focusedOption === value;
+  const isSelected = selectedOption === value;
 
   const handleClick = (event: React.MouseEvent) => {
-    context.setSelectedOption(value);
+    setSelectedOption(value);
   };
+
+  React.useEffect(() => {
+    if (isSelected === true) {
+      setFocusedOption(value);
+    }
+  }, [selectedOption]);
+
+  React.useLayoutEffect(() => {
+    if (ref.current === null || isFocused === false) {
+      return;
+    }
+
+    ref.current.scrollIntoView({ block: "nearest" });
+  }, [focusedOption]);
 
   return (
     <li
@@ -48,10 +92,14 @@ const ListboxOption = ({
       // https://www.w3.org/TR/wai-aria-practices-1.2/#Listbox
       aria-selected={isSelected}
       className="listbox-option"
+      data-focused={isFocused}
       // Each option in the listbox has role `option` and is a DOM descendant of the element with role `listbox`.
       // https://www.w3.org/TR/wai-aria-1.0/roles#option
-      id={value}
+      id={String(value)}
+      ref={ref}
       role="option"
+      // Safari keeps the option focused when clicked.
+      tabIndex={-1}
       onClick={handleClick}
     >
       {children}
@@ -60,24 +108,111 @@ const ListboxOption = ({
 };
 
 interface ListboxProps {
-  children: React.ReactNode;
+  children: React.ReactElement<ListboxOptionProps>[];
+  defaultValue?: ListboxValue;
 }
 
 /**
  * Listbox
  */
-const Listbox = ({ children, ...props }: ListboxProps) => {
-  const [selectedOption, setSelectedOption] = React.useState(null);
-  const context = React.useMemo(
-    () => ({ selectedOption, setSelectedOption }),
-    [selectedOption]
+const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
+  const listboxRef = React.useRef<HTMLUListElement>(null);
+
+  const [options, setOptions] = React.useState<ListboxDescendant[]>([]);
+
+  const [focusedOption, setFocusedOption] =
+    React.useState<ListboxValue>(defaultValue);
+
+  const [selectedOption, setSelectedOption] =
+    React.useState<ListboxValue>(defaultValue);
+
+  const tabIndex = options.length > 0 ? 0 : -1;
+
+  const context = React.useMemo<ListboxContextOptions>(
+    () => ({
+      options,
+      setOptions,
+      focusedOption,
+      setFocusedOption,
+      selectedOption,
+      setSelectedOption,
+    }),
+    [options, focusedOption, selectedOption]
   );
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    event.preventDefault();
+
+    switch (event.code) {
+      case "ArrowDown":
+        highlightSiblingOption(HighlightDirection.Down);
+        break;
+      case "ArrowUp":
+        highlightSiblingOption(HighlightDirection.Up);
+        break;
+      case "Enter":
+      case "Space":
+        setSelectedOption(focusedOption);
+        break;
+    }
+  };
+
+  const highlightSiblingOption = (direction: HighlightDirection) => {
+    const optionData = options.find((option) => option.value === focusedOption);
+    const optionIndex = optionData ? optionData.index : 0;
+
+    let nextIndex = optionIndex;
+    let nextValue;
+
+    if (direction === HighlightDirection.Down) {
+      nextIndex = optionIndex + 1;
+    } else {
+      nextIndex = optionIndex - 1;
+    }
+
+    if (
+      options[nextIndex] === undefined ||
+      options[nextIndex].value === focusedOption
+    ) {
+      return;
+    }
+
+    nextValue = options[nextIndex].value;
+    setFocusedOption(nextValue);
+  };
+
+  const handleFocus = () => {
+    if (typeof focusedOption === "undefined" && options.length > 0) {
+      setFocusedOption(options[0].value);
+    }
+  };
+
+  React.useEffect(() => {
+    setSelectedOption(defaultValue);
+  }, [defaultValue]);
+
+  React.useLayoutEffect(() => {
+    const optionsData =
+      React.Children.map<
+        ListboxDescendant,
+        React.ReactElement<ListboxOptionProps>
+      >(children, (child, index) => {
+        return { index: index, value: child.props.value };
+      }) || [];
+
+    setOptions(optionsData);
+  }, []);
+
   return (
     <ListboxContext.Provider value={context}>
       <ul
-        aria-activedescendant={String(selectedOption)}
+        aria-activedescendant={String(focusedOption)}
         className="listbox"
-        tabIndex={0}
+        ref={listboxRef}
+        role="listbox"
+        tabIndex={tabIndex}
+        onFocus={handleFocus}
+        onKeyDown={handleKeyDown}
         {...props}
       >
         {children}

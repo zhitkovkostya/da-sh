@@ -1,23 +1,37 @@
 .listbox {
-  width: 300px;
+  overflow-y: auto;
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
+  border-radius: 0.32rem;
 }
 
 .listbox:focus {
-  box-shadow: 0 0 4px 0 #000;
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 2px solid #1fa7fd;
+  outline-offset: 0px;
 }
 
 .listbox-option {
-  margin-bottom: 0.4rem;
-  padding: 0.64rem 1.28rem;
-  background-color: aliceblue;
-  border-radius: 0.4rem;
+  position: relative; 
+  padding: 0.64rem 1.6rem;
+  background-color: #fff;
+  border-radius: 0.32rem;
   list-style: none;
   cursor: pointer;
 }
 
-.listbox-option[aria-selected="true"] {
-  background-color: aquamarine;
+.listbox-option:focus {
+  outline: none;
+}
+
+.listbox-option[aria-selected="true"]::after {
+  content: "\2713";
+  position: absolute;
+  left: .56rem;
+}
+
+.listbox-option[data-focused="true"] {
+  outline: 2px solid #1fa7fd;
+  outline-offset: -4px;
 }
