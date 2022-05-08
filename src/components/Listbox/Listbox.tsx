@@ -128,6 +128,8 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
         event.preventDefault();
         highlightSiblingOption(HighlightDirection.Up);
         break;
+      case "Space":
+        event.preventDefault();
     }
   };
 
