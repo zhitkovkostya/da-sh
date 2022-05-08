@@ -19,9 +19,9 @@ interface ListboxContextOptions {
   // A set of listbox option data.
   options: ListboxDescendant[];
   setOptions: React.Dispatch<React.SetStateAction<ListboxDescendant[]>>;
-  // Selected option id.
-  selectedOption: ListboxValue;
-  setSelectedOption: React.Dispatch<React.SetStateAction<ListboxValue>>;
+  // Focused option id.
+  focusedOption: ListboxValue;
+  setFocusedOption: React.Dispatch<React.SetStateAction<ListboxValue>>;
 }
 
 /**
@@ -30,8 +30,8 @@ interface ListboxContextOptions {
 const ListboxContext = React.createContext<ListboxContextOptions>({
   options: [],
   setOptions: () => {},
-  selectedOption: undefined,
-  setSelectedOption: () => {},
+  focusedOption: undefined,
+  setFocusedOption: () => {},
 });
 
 ListboxContext.displayName = "ListboxContext";
@@ -54,22 +54,20 @@ const ListboxOption = ({
   value,
 }: ListboxOptionProps) => {
   const ref = React.useRef<HTMLLIElement>(null);
-  const context = React.useContext(ListboxContext);
-  const isSelected = context.selectedOption === value;
+  const { focusedOption, setFocusedOption } = React.useContext(ListboxContext);
+  const isFocused = focusedOption === value;
 
   const handleClick = (event: React.MouseEvent) => {
-    context.setSelectedOption(value);
+    setFocusedOption(value);
   };
 
-  // create ref
-
   React.useLayoutEffect(() => {
-    if (ref.current === null) {
+    if (ref.current === null || isFocused === false) {
       return;
     }
 
     ref.current.scrollIntoView({ block: "nearest" });
-  }, [isSelected]);
+  }, [focusedOption]);
 
   return (
     <li
@@ -79,8 +77,9 @@ const ListboxOption = ({
       // In a single-select listbox, the selected option has `aria-selected`
       // set to `true`.
       // https://www.w3.org/TR/wai-aria-practices-1.2/#Listbox
-      aria-selected={isSelected}
+      aria-selected={isFocused}
       className="listbox-option"
+      data-focused={isFocused}
       // Each option in the listbox has role `option` and is a DOM descendant of the element with role `listbox`.
       // https://www.w3.org/TR/wai-aria-1.0/roles#option
       id={String(value)}
@@ -108,14 +107,14 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
 
   const [options, setOptions] = React.useState<ListboxDescendant[]>([]);
 
-  const [selectedOption, setSelectedOption] =
+  const [focusedOption, setFocusedOption] =
     React.useState<ListboxValue>(defaultValue);
 
   const tabIndex = options.length > 0 ? 0 : -1;
 
   const context = React.useMemo<ListboxContextOptions>(
-    () => ({ options, setOptions, selectedOption, setSelectedOption }),
-    [options, selectedOption]
+    () => ({ options, setOptions, focusedOption, setFocusedOption }),
+    [options, focusedOption]
   );
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -134,9 +133,7 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
   };
 
   const highlightSiblingOption = (direction: HighlightDirection) => {
-    const optionData = options.find(
-      (option) => option.value === selectedOption
-    );
+    const optionData = options.find((option) => option.value === focusedOption);
     const optionIndex = optionData ? optionData.index : 0;
 
     let nextIndex = optionIndex;
@@ -150,23 +147,23 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
 
     if (
       options[nextIndex] === undefined ||
-      options[nextIndex].value === selectedOption
+      options[nextIndex].value === focusedOption
     ) {
       return;
     }
 
     nextValue = options[nextIndex].value;
-    setSelectedOption(nextValue);
+    setFocusedOption(nextValue);
   };
 
   const handleFocus = () => {
-    if (typeof selectedOption === "undefined" && options.length > 0) {
-      setSelectedOption(options[0].value);
+    if (typeof focusedOption === "undefined" && options.length > 0) {
+      setFocusedOption(options[0].value);
     }
   };
 
   React.useEffect(() => {
-    setSelectedOption(defaultValue);
+    setFocusedOption(defaultValue);
   }, [defaultValue]);
 
   React.useLayoutEffect(() => {
@@ -184,7 +181,7 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
   return (
     <ListboxContext.Provider value={context}>
       <ul
-        aria-activedescendant={String(selectedOption)}
+        aria-activedescendant={String(focusedOption)}
         className="listbox"
         ref={listboxRef}
         role="listbox"

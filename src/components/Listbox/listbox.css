@@ -4,16 +4,19 @@
   height: 100%;
   margin: 0;
   padding: 0;
+  border-radius: 0.32rem;
 }
 
 .listbox:focus {
-  box-shadow: 0 0 4px 0 #000;
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 2px solid #1fa7fd;
+  outline-offset: 0px;
 }
 
 .listbox-option {
-  padding: 0.64rem 1.28rem;
+  position: relative; 
+  padding: 0.64rem 1.6rem;
   background-color: #fff;
+  border-radius: 0.32rem;
   list-style: none;
   cursor: pointer;
 }
@@ -22,6 +25,13 @@
   outline: none;
 }
 
-.listbox-option[aria-selected="true"] {
-  background-color: #dcdcdc;
+.listbox-option[aria-selected="true"]::after {
+  content: "\2713";
+  position: absolute;
+  left: .56rem;
+}
+
+.listbox-option[data-focused="true"] {
+  outline: 2px solid #1fa7fd;
+  outline-offset: -4px;
 }
