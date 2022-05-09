@@ -108,7 +108,9 @@ const ListboxOption = ({
 };
 
 interface ListboxProps {
-  children: React.ReactElement<ListboxOptionProps>[];
+  children:
+    | React.ReactElement<ListboxOptionProps>
+    | React.ReactElement<ListboxOptionProps>[];
   defaultValue?: ListboxValue;
 }
 
