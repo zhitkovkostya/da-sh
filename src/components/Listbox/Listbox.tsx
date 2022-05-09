@@ -108,7 +108,9 @@ const ListboxOption = ({
 };
 
 interface ListboxProps {
-  children: React.ReactElement<ListboxOptionProps>[];
+  children:
+    | React.ReactElement<ListboxOptionProps>
+    | React.ReactElement<ListboxOptionProps>[];
   defaultValue?: ListboxValue;
 }
 
@@ -141,17 +143,18 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
   );
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    event.preventDefault();
-
     switch (event.code) {
       case "ArrowDown":
+        event.preventDefault();
         highlightSiblingOption(HighlightDirection.Down);
         break;
       case "ArrowUp":
+        event.preventDefault();
         highlightSiblingOption(HighlightDirection.Up);
         break;
       case "Enter":
       case "Space":
+        event.preventDefault();
         setSelectedOption(focusedOption);
         break;
     }
