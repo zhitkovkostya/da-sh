@@ -1,31 +1,13 @@
-import React, { ReactChild } from "react";
-import "./listbox.css";
-
-type ListboxValue = string | undefined;
-
-enum HighlightDirection {
-  Up,
-  Down,
-}
-
-interface ListboxDescendant {
-  // Option index.
-  index: number;
-  // Option value.
-  value: ListboxValue;
-}
-
-interface ListboxContextOptions {
-  // A set of listbox option data.
-  options: ListboxDescendant[];
-  setOptions: React.Dispatch<React.SetStateAction<ListboxDescendant[]>>;
-  // Focused option id.
-  focusedOption: ListboxValue;
-  setFocusedOption: React.Dispatch<React.SetStateAction<ListboxValue>>;
-  // Selected option id.
-  selectedOption: ListboxValue;
-  setSelectedOption: React.Dispatch<React.SetStateAction<ListboxValue>>;
-}
+import React from "react";
+import {
+  HighlightDirection,
+  ListboxDescendant,
+  ListboxContextOptions,
+  ListboxOptionProps,
+  ListboxProps,
+  ListboxValue
+} from "./types";
+import "./styles.css";
 
 /**
  * Listbox Context
@@ -40,15 +22,6 @@ const ListboxContext = React.createContext<ListboxContextOptions>({
 });
 
 ListboxContext.displayName = "ListboxContext";
-
-interface ListboxOptionProps {
-  // The option's content.
-  children: React.ReactNode;
-  // Whether or not the option is disabled from selection and navigation.
-  disabled?: boolean;
-  // The option's value.
-  value: ListboxValue;
-}
 
 /**
  * Listbox Option
@@ -106,13 +79,6 @@ const ListboxOption = ({
     </li>
   );
 };
-
-interface ListboxProps {
-  children:
-    | React.ReactElement<ListboxOptionProps>
-    | React.ReactElement<ListboxOptionProps>[];
-  defaultValue?: ListboxValue;
-}
 
 /**
  * Listbox

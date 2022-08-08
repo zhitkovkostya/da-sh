@@ -1,7 +1,8 @@
 import React from "react";
 import { Meta } from "@storybook/react/types-6-0";
 import { Story } from "@storybook/react";
-import { Listbox, ListboxOption, ListboxProps } from "./Listbox";
+import { Listbox, ListboxOption } from "./Listbox";
+import { ListboxProps } from "./types";
 
 const optionsData = [
   { value: "default", text: "Choose a state..." },
