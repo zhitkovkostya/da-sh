@@ -1,0 +1,35 @@
+.button {
+  font-weight: 600;
+  font-size: 18px;
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 1;
+  height: 48px;
+  padding: 12px 24px;
+  background-color: #fff;
+  color: #000;
+}
+
+.button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.button:focus-visible {
+  outline: #0000ff solid 2px;
+  outline-offset: 2px;
+}
+
+.button--primary {
+  color: white;
+  background-color: #000;
+}
+
+.button--primary:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.button--large {
+  height: 56px;
+}
