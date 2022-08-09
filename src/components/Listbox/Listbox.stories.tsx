@@ -57,7 +57,10 @@ const optionsData = [
   { value: 'wy', text: 'Wyoming' }
 ]
 const options = optionsData.map((option) => option.value)
-const labels = optionsData.reduce((prev, current) => ({ ...prev, [`${[current.value]}`]: current.text }), {})
+const labels = optionsData.reduce(
+  (prev, current) => ({ ...prev, [`${[current.value]}`]: current.text }),
+  {}
+)
 
 export default {
   title: 'Components/Listbox',

@@ -24,5 +24,8 @@ Primary.args = { label: 'Primary', primary: true, size: 'medium' }
 
 export const Secondary = Template.bind({})
 Secondary.args = {
-  ...Primary.args, primary: false, label: 'Secondary', size: 'medium'
+  ...Primary.args,
+  primary: false,
+  label: 'Secondary',
+  size: 'medium'
 }

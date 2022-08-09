@@ -26,15 +26,14 @@ ListboxContext.displayName = 'ListboxContext'
 /**
  * Listbox Option
  */
-function ListboxOption ({
+function ListboxOption({
   children,
   disabled = false,
   value
 }: ListboxOptionProps) {
   const ref = React.useRef<HTMLLIElement>(null)
-  const {
-    focusedOption, setFocusedOption, selectedOption, setSelectedOption
-  } = React.useContext(ListboxContext)
+  const { focusedOption, setFocusedOption, selectedOption, setSelectedOption } =
+    React.useContext(ListboxContext)
   const isFocused = focusedOption === value
   const isSelected = selectedOption === value
 
@@ -84,14 +83,16 @@ function ListboxOption ({
 /**
  * Listbox
  */
-function Listbox ({ children, defaultValue, ...props }: ListboxProps) {
+function Listbox({ children, defaultValue, ...props }: ListboxProps) {
   const listboxRef = React.useRef<HTMLUListElement>(null)
 
   const [options, setOptions] = React.useState<ListboxDescendant[]>([])
 
-  const [focusedOption, setFocusedOption] = React.useState<ListboxValue>(defaultValue)
+  const [focusedOption, setFocusedOption] =
+    React.useState<ListboxValue>(defaultValue)
 
-  const [selectedOption, setSelectedOption] = React.useState<ListboxValue>(defaultValue)
+  const [selectedOption, setSelectedOption] =
+    React.useState<ListboxValue>(defaultValue)
 
   const tabIndex = options.length > 0 ? 0 : -1
 
@@ -159,10 +160,14 @@ function Listbox ({ children, defaultValue, ...props }: ListboxProps) {
   }, [defaultValue])
 
   React.useLayoutEffect(() => {
-    const optionsData = React.Children.map<
-    ListboxDescendant,
-    React.ReactElement<ListboxOptionProps>
-    >(children, (child, index) => ({ index, value: child.props.value })) || []
+    const optionsData =
+      React.Children.map<
+        ListboxDescendant,
+        React.ReactElement<ListboxOptionProps>
+      >(children, (child, index) => ({
+        index,
+        value: child.props.value
+      })) || []
 
     setOptions(optionsData)
   }, [])
