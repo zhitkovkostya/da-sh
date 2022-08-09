@@ -1,13 +1,13 @@
-import React from "react";
+import React from 'react';
 import {
   HighlightDirection,
   ListboxDescendant,
   ListboxContextOptions,
   ListboxOptionProps,
   ListboxProps,
-  ListboxValue
-} from "./types";
-import "./styles.css";
+  ListboxValue,
+} from './types';
+import './styles.css';
 
 /**
  * Listbox Context
@@ -21,19 +21,20 @@ const ListboxContext = React.createContext<ListboxContextOptions>({
   setSelectedOption: () => {},
 });
 
-ListboxContext.displayName = "ListboxContext";
+ListboxContext.displayName = 'ListboxContext';
 
 /**
  * Listbox Option
  */
-const ListboxOption = ({
+function ListboxOption({
   children,
   disabled = false,
   value,
-}: ListboxOptionProps) => {
+}: ListboxOptionProps) {
   const ref = React.useRef<HTMLLIElement>(null);
-  const { focusedOption, setFocusedOption, selectedOption, setSelectedOption } =
-    React.useContext(ListboxContext);
+  const {
+    focusedOption, setFocusedOption, selectedOption, setSelectedOption,
+  } = React.useContext(ListboxContext);
   const isFocused = focusedOption === value;
   const isSelected = selectedOption === value;
 
@@ -52,7 +53,7 @@ const ListboxOption = ({
       return;
     }
 
-    ref.current.scrollIntoView({ block: "nearest" });
+    ref.current.scrollIntoView({ block: 'nearest' });
   }, [focusedOption]);
 
   return (
@@ -78,21 +79,19 @@ const ListboxOption = ({
       {children}
     </li>
   );
-};
+}
 
 /**
  * Listbox
  */
-const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
+function Listbox({ children, defaultValue, ...props }: ListboxProps) {
   const listboxRef = React.useRef<HTMLUListElement>(null);
 
   const [options, setOptions] = React.useState<ListboxDescendant[]>([]);
 
-  const [focusedOption, setFocusedOption] =
-    React.useState<ListboxValue>(defaultValue);
+  const [focusedOption, setFocusedOption] = React.useState<ListboxValue>(defaultValue);
 
-  const [selectedOption, setSelectedOption] =
-    React.useState<ListboxValue>(defaultValue);
+  const [selectedOption, setSelectedOption] = React.useState<ListboxValue>(defaultValue);
 
   const tabIndex = options.length > 0 ? 0 : -1;
 
@@ -105,21 +104,21 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
       selectedOption,
       setSelectedOption,
     }),
-    [options, focusedOption, selectedOption]
+    [options, focusedOption, selectedOption],
   );
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     switch (event.code) {
-      case "ArrowDown":
+      case 'ArrowDown':
         event.preventDefault();
         highlightSiblingOption(HighlightDirection.Down);
         break;
-      case "ArrowUp":
+      case 'ArrowUp':
         event.preventDefault();
         highlightSiblingOption(HighlightDirection.Up);
         break;
-      case "Enter":
-      case "Space":
+      case 'Enter':
+      case 'Space':
         event.preventDefault();
         setSelectedOption(focusedOption);
         break;
@@ -140,8 +139,8 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
     }
 
     if (
-      options[nextIndex] === undefined ||
-      options[nextIndex].value === focusedOption
+      options[nextIndex] === undefined
+      || options[nextIndex].value === focusedOption
     ) {
       return;
     }
@@ -151,7 +150,7 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
   };
 
   const handleFocus = () => {
-    if (typeof focusedOption === "undefined" && options.length > 0) {
+    if (typeof focusedOption === 'undefined' && options.length > 0) {
       setFocusedOption(options[0].value);
     }
   };
@@ -161,13 +160,10 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
   }, [defaultValue]);
 
   React.useLayoutEffect(() => {
-    const optionsData =
-      React.Children.map<
+    const optionsData = React.Children.map<
         ListboxDescendant,
         React.ReactElement<ListboxOptionProps>
-      >(children, (child, index) => {
-        return { index: index, value: child.props.value };
-      }) || [];
+      >(children, (child, index) => ({ index, value: child.props.value })) || [];
 
     setOptions(optionsData);
   }, []);
@@ -188,7 +184,7 @@ const Listbox = ({ children, defaultValue, ...props }: ListboxProps) => {
       </ul>
     </ListboxContext.Provider>
   );
-};
+}
 
 export type { ListboxProps, ListboxOptionProps };
 
