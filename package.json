@@ -71,6 +71,11 @@
     "react": "18.0.0",
     "react-dom": "18.0.0"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "lint-staged": {
     "*.js": "eslint --cache --fix"
   }
