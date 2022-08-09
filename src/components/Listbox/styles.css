@@ -13,7 +13,7 @@
 }
 
 .listbox-option {
-  position: relative; 
+  position: relative;
   padding: 0.64rem 1.6rem;
   background-color: #fff;
   border-radius: 0.32rem;
@@ -25,13 +25,13 @@
   outline: none;
 }
 
-.listbox-option[aria-selected="true"]::after {
-  content: "\2713";
+.listbox-option[aria-selected='true']::after {
+  content: '\2713';
   position: absolute;
-  left: .56rem;
+  left: 0.56rem;
 }
 
-.listbox-option[data-focused="true"] {
+.listbox-option[data-focused='true'] {
   outline: 2px solid #0000ff;
   outline-offset: -4px;
 }

@@ -1,35 +1,32 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true,
-        "jest/globals": true
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "jest/globals": true
+  },
+  "extends": [
+    "plugin:react/recommended",
+    "standard",
+    "plugin:prettier/recommended"
+  ],
+  "ignorePatterns": ["rollup.config.js"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
     },
-    "extends": [
-        "plugin:react/recommended",
-        "standard",
-        "plugin:prettier/recommended"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": "latest",
-        "sourceType": "module",
-        "project": "./tsconfig.json"
-    },
-    "plugins": [
-        "react",
-        "jest",
-        "@typescript-eslint"
-    ],
-    "rules": {
-        "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": ["error"]
-    },
-    "settings": {
-        "react": {
-            "version": "detect"
-        }
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["react", "jest", "@typescript-eslint"],
+  "rules": {
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error"]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
     }
+  }
 }

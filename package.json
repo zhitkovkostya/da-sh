@@ -10,9 +10,10 @@
     "test": "test",
     "storybook": "start-storybook -p 6006",
     "storybook:build": "build-storybook",
-    "lint": "eslint ./src/**/*.ts*",
+    "lint": "eslint ./src/**/*.{ts,tsx}",
     "lint:fix": "npm run lint -- --cache --fix",
     "format": "prettier",
+    "format:fix": "npm run format -- --write .",
     "prepare": "husky install"
   },
   "repository": {
@@ -77,6 +78,9 @@
     }
   },
   "lint-staged": {
-    "**/*.{js,ts,tsx}": ["eslint . --fix", "prettier --write ."]
+    "./src/**/*.{ts,tsx}": [
+      "eslint --cache --fix",
+      "prettier --write ."
+    ]
   }
 }
