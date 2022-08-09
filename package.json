@@ -12,7 +12,8 @@
     "storybook:build": "build-storybook",
     "lint": "eslint ./src/**/*.ts*",
     "lint:fix": "npm run lint -- --cache --fix",
-    "format": "prettier"
+    "format": "prettier",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -54,6 +55,8 @@
     "eslint-plugin-promise": "6.0.0",
     "eslint-plugin-react": "7.30.1",
     "eslint-plugin-react-hooks": "4.6.0",
+    "husky": "8.0.0",
+    "lint-staged": "13.0.3",
     "postcss": "8.4.12",
     "prettier": "2.7.1",
     "react": "18.0.0",
@@ -67,5 +70,8 @@
   "peerDependencies": {
     "react": "18.0.0",
     "react-dom": "18.0.0"
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix"
   }
 }

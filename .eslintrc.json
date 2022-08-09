@@ -9,6 +9,11 @@
         "standard",
         "plugin:prettier/recommended"
     ],
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaFeatures": {
