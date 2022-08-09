@@ -1,6 +1,6 @@
 {
   "name": "da-sh",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A UI kit for building beautiful dashboards.",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
