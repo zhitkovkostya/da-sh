@@ -1,18 +1,18 @@
-import React from 'react';
-import { ButtonProps } from './types';
-import './styles.css';
+import React from 'react'
+import { ButtonProps } from './types'
+import './styles.css'
 
 // Primary UI component for user interaction
-function Button({
+function Button ({
   primary = true,
   size = 'medium',
   onClick,
-  label,
+  label
 }: ButtonProps) {
   const mode = primary
     ? 'button--primary'
-    : 'button--secondary';
-  const classNames = ['button', `button--${size}`, mode].join(' ');
+    : 'button--secondary'
+  const classNames = ['button', `button--${size}`, mode].join(' ')
 
   return (
     <button
@@ -22,7 +22,7 @@ function Button({
     >
       {label}
     </button>
-  );
+  )
 }
 
-export default Button;
+export default Button

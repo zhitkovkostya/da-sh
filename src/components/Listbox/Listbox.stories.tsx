@@ -1,8 +1,8 @@
-import React from 'react';
-import { Meta } from '@storybook/react/types-6-0';
-import { Story } from '@storybook/react';
-import { Listbox, ListboxOption } from './Listbox';
-import { ListboxProps } from './types';
+import React from 'react'
+import { Meta } from '@storybook/react/types-6-0'
+import { Story } from '@storybook/react'
+import { Listbox, ListboxOption } from './Listbox'
+import { ListboxProps } from './types'
 
 const optionsData = [
   { value: 'default', text: 'Choose a state...' },
@@ -54,10 +54,10 @@ const optionsData = [
   { value: 'wa', text: 'Washington' },
   { value: 'wv', text: 'West Virginia' },
   { value: 'wi', text: 'Wisconsin' },
-  { value: 'wy', text: 'Wyoming' },
-];
-const options = optionsData.map((option) => option.value);
-const labels = optionsData.reduce((prev, current) => ({ ...prev, [`${[current.value]}`]: current.text }), {});
+  { value: 'wy', text: 'Wyoming' }
+]
+const options = optionsData.map((option) => option.value)
+const labels = optionsData.reduce((prev, current) => ({ ...prev, [`${[current.value]}`]: current.text }), {})
 
 export default {
   title: 'Components/Listbox',
@@ -67,11 +67,11 @@ export default {
       options,
       control: {
         type: 'select',
-        labels,
-      },
-    },
-  },
-} as Meta;
+        labels
+      }
+    }
+  }
+} as Meta
 
 // Create a master template for mapping args to render the Listbox component
 const Template: Story<ListboxProps> = (args) => (
@@ -84,10 +84,10 @@ const Template: Story<ListboxProps> = (args) => (
       ))}
     </Listbox>
   </div>
-);
+)
 
 // Reuse that template for creating different stories
-export const Basic = Template.bind({});
+export const Basic = Template.bind({})
 Basic.args = {
-  defaultValue: 'default',
-};
+  defaultValue: 'default'
+}
